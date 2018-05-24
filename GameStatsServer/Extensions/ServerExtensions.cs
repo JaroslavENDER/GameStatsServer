@@ -10,7 +10,7 @@ namespace GameStatsServer.Extensions
             return new ServerInfo
             {
                 Name = server.Name,
-                GameModes = server.GameModes.ToArray()
+                GameModes = server.GameModes.Split(", ")
             };
         }
 
@@ -22,7 +22,7 @@ namespace GameStatsServer.Extensions
                 Info = new ServerInfo
                 {
                     Name = server.Name,
-                    GameModes = server.GameModes.ToArray()
+                    GameModes = server.GameModes.Split(", ")
                 }
             };
         }

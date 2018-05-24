@@ -1,6 +1,5 @@
 ﻿using GameStatsServer.Entities;
 using GameStatsServer.Models;
-using System.Linq;
 
 namespace GameStatsServer.Extensions
 {
@@ -12,7 +11,7 @@ namespace GameStatsServer.Extensions
             {
                 Endpoint = endpoint,
                 Name = serverInfo.Name,
-                GameModes = serverInfo.GameModes.ToList()
+                GameModes = string.Join(", ", serverInfo.GameModes)
             };
         }
     }
