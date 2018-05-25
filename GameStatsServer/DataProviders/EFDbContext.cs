@@ -11,7 +11,7 @@ namespace GameStatsServer.DataProviders
 
         public async Task<int> SaveChangesAsync()
         {
-            return await this.SaveChangesAsync();
+            return await base.SaveChangesAsync();
         }
 
         public EFDbContext(DbContextOptions options)
