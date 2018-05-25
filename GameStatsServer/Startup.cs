@@ -21,7 +21,7 @@ namespace GameStatsServer
         {
             services.AddDbContext<EFDbContext>(options
                 => options.UseSqlServer((Configuration.GetConnectionString("DefaultConnection"))));
-            services.AddTransient<IDbContext, EFDbContext>();
+            services.AddScoped<IDbContext, EFDbContext>();
             services.AddMvc();
         }
 

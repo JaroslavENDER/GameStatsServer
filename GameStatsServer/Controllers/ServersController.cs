@@ -34,7 +34,7 @@ namespace GameStatsServer.Controllers
 
         //PUT api/servers/{endpoint}/info
         [HttpPut("{endpoint}/info")]
-        public async void Info(string endpoint, [FromBody]ServerInfo value)
+        public async Task Info(string endpoint, [FromBody]ServerInfo value)
         {
             dbContext.Servers.Add(value.CreateServer(endpoint));
             await dbContext.SaveChangesAsync();
@@ -59,7 +59,7 @@ namespace GameStatsServer.Controllers
 
         //PUT api/servers/{endpoint}/matches/{timestamp}
         [HttpPut("{endpoint}/matches/{timestamp}")]
-        public async void Match(string endpoint, string timestamp, [FromBody]MatchInfo value)
+        public async Task Match(string endpoint, string timestamp, [FromBody]MatchInfo value)
         {
             var server = await dbContext.Servers.FindAsync(endpoint);
             server?.Mathes.Add(value.CreateMatch(timestamp));
