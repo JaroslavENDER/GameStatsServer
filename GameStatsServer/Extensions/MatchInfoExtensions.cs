@@ -25,6 +25,8 @@ namespace GameStatsServer.Extensions
                 Kills = sb.Kills,
                 Deaths = sb.Deaths
             }));
+            for (var i = 1; i <= result.Scores.Count; i++)
+                result.Scores[i].LeaderboardPlace = i;
             return result;
         }
     }

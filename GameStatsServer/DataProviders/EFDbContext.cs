@@ -8,14 +8,14 @@ namespace GameStatsServer.DataProviders
     {
         public DbSet<Server> Servers { get; set; }
         public DbSet<Match> Matches { get; set; }
+        public DbSet<Score> Scores { get; set; }
 
         public async Task<int> SaveChangesAsync()
-        {
-            return await base.SaveChangesAsync();
-        }
+            => await base.SaveChangesAsync();
 
         public EFDbContext(DbContextOptions options)
             : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => base.OnConfiguring(optionsBuilder);
     }

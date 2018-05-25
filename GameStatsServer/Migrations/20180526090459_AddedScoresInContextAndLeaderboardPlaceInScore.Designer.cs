@@ -11,9 +11,10 @@ using System;
 namespace GameStatsServer.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180526090459_AddedScoresInContextAndLeaderboardPlaceInScore")]
+    partial class AddedScoresInContextAndLeaderboardPlaceInScore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

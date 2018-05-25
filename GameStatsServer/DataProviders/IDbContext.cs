@@ -9,6 +9,7 @@ namespace GameStatsServer.DataProviders
     {
         DbSet<Server> Servers { get; set; }
         DbSet<Match> Matches { get; set; }
+        DbSet<Score> Scores { get; set; }
         int SaveChanges();
         Task<int> SaveChangesAsync();
     }

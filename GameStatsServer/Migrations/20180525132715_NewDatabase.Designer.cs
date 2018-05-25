@@ -11,8 +11,8 @@ using System;
 namespace GameStatsServer.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    [Migration("20180524165514_AddServersAndMatches")]
-    partial class AddServersAndMatches
+    [Migration("20180525132715_NewDatabase")]
+    partial class NewDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,27 @@ namespace GameStatsServer.Migrations
 
             modelBuilder.Entity("GameStatsServer.Entities.Match", b =>
                 {
-                    b.Property<DateTime>("Timestamp");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("FragLimit");
 
-                    b.Property<string>("GameMode");
+                    b.Property<string>("GameMode")
+                        .IsRequired();
 
-                    b.Property<string>("Map");
+                    b.Property<string>("Map")
+                        .IsRequired();
 
-                    b.Property<string>("ServerEndpoint");
+                    b.Property<string>("ServerEndpoint")
+                        .IsRequired();
 
                     b.Property<double>("TimeElapsed");
 
                     b.Property<int>("TimeLimit");
 
-                    b.HasKey("Timestamp");
+                    b.Property<DateTime>("Timestamp");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ServerEndpoint");
 
@@ -55,13 +61,14 @@ namespace GameStatsServer.Migrations
 
                     b.Property<int>("Kills");
 
-                    b.Property<DateTime?>("MatchTimestamp");
+                    b.Property<int>("MatchId");
 
-                    b.Property<string>("PlayerName");
+                    b.Property<string>("PlayerName")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MatchTimestamp");
+                    b.HasIndex("MatchId");
 
                     b.ToTable("Score");
                 });
@@ -71,9 +78,11 @@ namespace GameStatsServer.Migrations
                     b.Property<string>("Endpoint")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("GameModes");
+                    b.Property<string>("GameModes")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("Endpoint");
 
@@ -82,16 +91,18 @@ namespace GameStatsServer.Migrations
 
             modelBuilder.Entity("GameStatsServer.Entities.Match", b =>
                 {
-                    b.HasOne("GameStatsServer.Entities.Server", "Server")
-                        .WithMany("Mathes")
-                        .HasForeignKey("ServerEndpoint");
+                    b.HasOne("GameStatsServer.Entities.Server")
+                        .WithMany("Matches")
+                        .HasForeignKey("ServerEndpoint")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GameStatsServer.Entities.Score", b =>
                 {
-                    b.HasOne("GameStatsServer.Entities.Match", "Match")
+                    b.HasOne("GameStatsServer.Entities.Match")
                         .WithMany("Scores")
-                        .HasForeignKey("MatchTimestamp");
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

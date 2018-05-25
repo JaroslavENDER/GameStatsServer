@@ -5,13 +5,12 @@ namespace GameStatsServer.Entities
 {
     public class Server
     {
-        [Key]
-        public string Endpoint { get; set; }
-        public string Name { get; set; }
-        public string GameModes { get; set; }
+        [Key] public string Endpoint { get; set; }
+        [Required] public string Name { get; set; }
+        [Required] public string GameModes { get; set; }
 
-        public virtual List<Match> Mathes { get; }
+        public List<Match> Matches { get; set; }
 
-        public Server() => Mathes = new List<Match>();
+        public Server() => Matches = new List<Match>();
     }
 }

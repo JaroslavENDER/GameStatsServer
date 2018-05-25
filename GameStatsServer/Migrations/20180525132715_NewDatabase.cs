@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace GameStatsServer.Migrations
 {
-    public partial class AddServersAndMatches : Migration
+    public partial class NewDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,8 @@ namespace GameStatsServer.Migrations
                 columns: table => new
                 {
                     Endpoint = table.Column<string>(nullable: false),
-                    GameModes = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true)
+                    GameModes = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,23 +26,25 @@ namespace GameStatsServer.Migrations
                 name: "Matches",
                 columns: table => new
                 {
-                    Timestamp = table.Column<DateTime>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     FragLimit = table.Column<int>(nullable: false),
-                    GameMode = table.Column<string>(nullable: true),
-                    Map = table.Column<string>(nullable: true),
-                    ServerEndpoint = table.Column<string>(nullable: true),
+                    GameMode = table.Column<string>(nullable: false),
+                    Map = table.Column<string>(nullable: false),
+                    ServerEndpoint = table.Column<string>(nullable: false),
                     TimeElapsed = table.Column<double>(nullable: false),
-                    TimeLimit = table.Column<int>(nullable: false)
+                    TimeLimit = table.Column<int>(nullable: false),
+                    Timestamp = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Matches", x => x.Timestamp);
+                    table.PrimaryKey("PK_Matches", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Matches_Servers_ServerEndpoint",
                         column: x => x.ServerEndpoint,
                         principalTable: "Servers",
                         principalColumn: "Endpoint",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,18 +56,18 @@ namespace GameStatsServer.Migrations
                     Deaths = table.Column<int>(nullable: false),
                     Frags = table.Column<int>(nullable: false),
                     Kills = table.Column<int>(nullable: false),
-                    MatchTimestamp = table.Column<DateTime>(nullable: true),
-                    PlayerName = table.Column<string>(nullable: true)
+                    MatchId = table.Column<int>(nullable: false),
+                    PlayerName = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Score", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Score_Matches_MatchTimestamp",
-                        column: x => x.MatchTimestamp,
+                        name: "FK_Score_Matches_MatchId",
+                        column: x => x.MatchId,
                         principalTable: "Matches",
-                        principalColumn: "Timestamp",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -74,9 +76,9 @@ namespace GameStatsServer.Migrations
                 column: "ServerEndpoint");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Score_MatchTimestamp",
+                name: "IX_Score_MatchId",
                 table: "Score",
-                column: "MatchTimestamp");
+                column: "MatchId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

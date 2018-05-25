@@ -6,18 +6,17 @@ namespace GameStatsServer.Entities
 {
     public class Match
     {
-        [Key]
-        public string Endpoint { get => Server.Endpoint; }
-        [Key]
-        public DateTime Timestamp { get; set; }
-        public string Map { get; set; }
-        public string GameMode { get; set; }
-        public int FragLimit { get; set; }
-        public int TimeLimit { get; set; }
-        public double TimeElapsed { get; set; }
+        [Key] public int Id { get; set; }
+        [Required] public DateTime Timestamp { get; set; }
+        [Required] public string Map { get; set; }
+        [Required] public string GameMode { get; set; }
+        [Required] public int FragLimit { get; set; }
+        [Required] public int TimeLimit { get; set; }
+        [Required] public double TimeElapsed { get; set; }
 
-        public virtual Server Server { get; set; }
-        public virtual List<Score> Scores { get; }
+        [Required] public Server Server { get; set; }
+
+        public List<Score> Scores { get; set; }
 
         public Match() => Scores = new List<Score>();
     }

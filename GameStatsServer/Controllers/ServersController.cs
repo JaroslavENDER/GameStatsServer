@@ -3,6 +3,7 @@ using GameStatsServer.Extensions;
 using GameStatsServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +46,9 @@ namespace GameStatsServer.Controllers
         public async Task<ServerStats> Stats(string endpoint)
         {
             var server = await dbContext.Servers.FindAsync(endpoint);
-            var lastTimestamp = await dbContext.Matches.MaxAsync(m => m.Timestamp);
+            var lastTimestamp = await dbContext.Matches.AnyAsync()
+                ? await dbContext.Matches.MaxAsync(m => m.Timestamp)
+                : DateTime.Now;
             return server?.CreateServerStats(lastTimestamp);
         }
 
@@ -53,7 +56,8 @@ namespace GameStatsServer.Controllers
         [HttpGet("{endpoint}/matches/{timestamp}")]
         public async Task<MatchInfo> Match(string endpoint, string timestamp)
         {
-            var match = await dbContext.Matches.FindAsync(endpoint, timestamp);
+            var server = await dbContext.Servers.FindAsync(endpoint);
+            var match = server.Matches.FirstOrDefault(m => m.Timestamp == DateTime.Parse(timestamp));
             return match?.CreateMatchInfo() ?? null;
         }
 
@@ -62,7 +66,7 @@ namespace GameStatsServer.Controllers
         public async Task Match(string endpoint, string timestamp, [FromBody]MatchInfo value)
         {
             var server = await dbContext.Servers.FindAsync(endpoint);
-            server?.Mathes.Add(value.CreateMatch(timestamp));
+            server?.Matches.Add(value.CreateMatch(timestamp));
             await dbContext.SaveChangesAsync();
         }
     }
