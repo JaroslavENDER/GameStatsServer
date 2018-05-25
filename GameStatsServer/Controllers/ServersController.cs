@@ -3,7 +3,6 @@ using GameStatsServer.Extensions;
 using GameStatsServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace GameStatsServer.Controllers
 
         //GET api/servers/info
         [HttpGet("info")]
-        public async Task<IEnumerable<ServerInfoWithEndpoint>> AllInfo()
+        public async Task<IEnumerable<ServerInfoWithEndpoint>> Info()
         {
             return await dbContext.Servers.Select(server => server.CreateServerInfoWithEndpoint()).ToListAsync();
         }
@@ -37,16 +36,17 @@ namespace GameStatsServer.Controllers
         [HttpPut("{endpoint}/info")]
         public async void Info(string endpoint, [FromBody]ServerInfo value)
         {
-            await dbContext.Servers.AddAsync(value.CreateServer(endpoint));
+            dbContext.Servers.Add(value.CreateServer(endpoint));
             await dbContext.SaveChangesAsync();
         }
 
         //GET api/servers/{endpoint}/stats
         [HttpGet("{endpoint}/stats")]
-        public string Stats(string endpoint)
+        public async Task<ServerStats> Stats(string endpoint)
         {
-            //TODO: Models.ServerStats
-            throw new NotImplementedException("//TODO: Models.ServerStats");
+            var server = await dbContext.Servers.FindAsync(endpoint);
+            var lastTimestamp = await dbContext.Matches.MaxAsync(m => m.Timestamp);
+            return server?.CreateServerStats(lastTimestamp);
         }
 
         //GET api/servers/{endpoint}/matches/{timestamp}
