@@ -10,7 +10,22 @@ namespace GameStatsServer.Extensions
     {
         public static PlayerStats CreateStats(this List<Score> scores, DateTime lastTimestamp)
         {
-            var playerAge = lastTimestamp.AddDays(1).Date - scores.Min(m => m.Match.Timestamp).Date;
+            if (!scores.Any())
+                return new PlayerStats
+                {
+                    TotalMatchesPlayed = 0,
+                    TotalMatchesWon = 0,
+                    FavoriteServer = string.Empty,
+                    UniqueServers = 0,
+                    FavoriteGameMode = string.Empty,
+                    MaximumMathcesPerDay = 0,
+                    AverageMatchesPerDay = 0,
+                    LastMatchPlayed = string.Empty,
+                    KillToDeathRatio = 0
+                };
+
+
+            var playerAge = lastTimestamp.AddDays(1).Date - scores.Min(s => s.Match.Timestamp).Date;
             return new PlayerStats
             {
                 TotalMatchesPlayed = scores.Count,

@@ -41,17 +41,6 @@ namespace GameStatsServer.Controllers
             await dbContext.SaveChangesAsync();
         }
 
-        //GET api/servers/{endpoint}/stats
-        [HttpGet("{endpoint}/stats")]
-        public async Task<ServerStats> Stats(string endpoint)
-        {
-            var server = await dbContext.Servers.FindAsync(endpoint);
-            var lastTimestamp = await dbContext.Matches.AnyAsync()
-                ? await dbContext.Matches.MaxAsync(m => m.Timestamp)
-                : DateTime.Now;
-            return server?.CreateServerStats(lastTimestamp);
-        }
-
         //GET api/servers/{endpoint}/matches/{timestamp}
         [HttpGet("{endpoint}/matches/{timestamp}")]
         public async Task<MatchInfo> Match(string endpoint, string timestamp)
