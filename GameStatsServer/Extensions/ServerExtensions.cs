@@ -51,7 +51,7 @@ namespace GameStatsServer.Extensions
                 AverageMatchesPerDay = (double)server.Matches.Count / serverAge.Days,
                 MaximunPopulation = server.Matches.Max(m => m.Scores.Count),
                 AveragePopulation = server.Matches.Average(m => m.Scores.Count),
-                Top5GameModes = new string[0],//TODO:Top5GameModes
+                Top5GameModes = server.Matches.GroupBy(m => m.GameMode).OrderByDescending(g => g.Count()).Take(5).Select(g => g.Key).ToArray(),
                 Top5Maps = server.Matches.GroupBy(m => m.Map).OrderByDescending(g => g.Count()).Take(5).Select(g => g.Key).ToArray()
             };
         }
