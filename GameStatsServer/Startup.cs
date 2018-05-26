@@ -1,4 +1,5 @@
 ﻿using GameStatsServer.Extensions;
+using GameStatsServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,8 @@ namespace GameStatsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEFDbContext(Configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddTransient<INormalizeReportsCount, NormalizeReportsCount>();
 
             services.AddMvc();
         }

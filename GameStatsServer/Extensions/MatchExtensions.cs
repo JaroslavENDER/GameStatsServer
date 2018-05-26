@@ -24,5 +24,15 @@ namespace GameStatsServer.Extensions
                 }).ToArray()
             };
         }
+
+        public static MatchInfoWithEndpointAndTimestamp CreateMatchInfoWithEndpointAndTimestamp(this Match match)
+        {
+            return new MatchInfoWithEndpointAndTimestamp
+            {
+                Server = match.Server.Endpoint,
+                Timestamp = match.Timestamp.ToString(),
+                Results = CreateMatchInfo(match)
+            };
+        }
     }
 }

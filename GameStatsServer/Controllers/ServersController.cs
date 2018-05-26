@@ -14,7 +14,7 @@ namespace GameStatsServer.Controllers
     [Route("api/Servers")]
     public class ServersController : Controller
     {
-        private IDbContext dbContext;
+        private readonly IDbContext dbContext;
         public ServersController(IDbContext dbContext)
             => this.dbContext = dbContext;
 

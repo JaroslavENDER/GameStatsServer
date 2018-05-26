@@ -21,11 +21,7 @@ namespace GameStatsServer.Extensions
             return new ServerInfoWithEndpoint
             {
                 Endpoint = server.Endpoint,
-                Info = new ServerInfo
-                {
-                    Name = server.Name,
-                    GameModes = server.GameModes.Split(", ")
-                }
+                Info = CreateServerInfo(server)
             };
         }
 
@@ -53,6 +49,19 @@ namespace GameStatsServer.Extensions
                 AveragePopulation = server.Matches.Average(m => m.Scores.Count),
                 Top5GameModes = server.Matches.GroupBy(m => m.GameMode).OrderByDescending(g => g.Count()).Take(5).Select(g => g.Key).ToArray(),
                 Top5Maps = server.Matches.GroupBy(m => m.Map).OrderByDescending(g => g.Count()).Take(5).Select(g => g.Key).ToArray()
+            };
+        }
+
+        public static PopularServerInfo CreatePopularServerInfo(this Server server, DateTime lastTimestamp)
+        {
+            var serverAge = server.Matches.Any()
+                ? lastTimestamp.AddDays(1).Date - server.Matches.Min(m => m.Timestamp).Date
+                : new TimeSpan(1, 0, 0, 0);
+            return new PopularServerInfo
+            {
+                Endpoint = server.Endpoint,
+                Name = server.Name,
+                AverageMatchesPerDay = (double)server.Matches.Count / serverAge.Days
             };
         }
     }
