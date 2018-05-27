@@ -1,7 +1,6 @@
 ﻿namespace GameStatsServer.Services
 {
-    public interface INormalizeReportsCount
+    public interface INormalizeReportsCount : INormalizeCount
     {
-        int Normalize(int? count);
     }
 }
