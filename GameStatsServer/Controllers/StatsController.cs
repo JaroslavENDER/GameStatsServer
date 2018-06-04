@@ -22,7 +22,9 @@ namespace GameStatsServer.Controllers
         [HttpGet("servers/{endpoint}/stats")]
         public async Task<ServerStats> ServerStats(string endpoint)
         {
-            var server = await dbContext.Servers.FindAsync(endpoint);
+            var server = await dbContext.Servers
+                .Include(s => s.Matches).ThenInclude(m => m.Scores)
+                .FirstOrDefaultAsync(s => s.Endpoint == endpoint);
             var lastTimestamp = await dbContext.Matches.AnyAsync()
                 ? await dbContext.Matches.MaxAsync(m => m.Timestamp)
                 : DateTime.Now;
@@ -34,6 +36,7 @@ namespace GameStatsServer.Controllers
         public async Task<PlayerStats> PlayerStats(string name)
         {
             var playerScores = await dbContext.Scores
+                .Include(s => s.Match).ThenInclude(m => m.Server)
                 .Where(s => s.PlayerName.Equals(name, StringComparison.OrdinalIgnoreCase))
                 .ToListAsync();
             var lastTimestamp = await dbContext.Matches.AnyAsync()

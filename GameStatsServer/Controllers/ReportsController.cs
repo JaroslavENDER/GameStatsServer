@@ -31,6 +31,8 @@ namespace GameStatsServer.Controllers
             var _count = normalizeReportsCount.Normalize(count);
 
             return await dbContext.Matches
+                .Include(m => m.Server)
+                .Include(m => m.Scores)
                 .OrderByDescending(m => m.Timestamp)
                 .Take(_count)
                 .Select(m => m.CreateMatchInfoWithEndpointAndTimestamp())
@@ -44,7 +46,7 @@ namespace GameStatsServer.Controllers
             var _count = normalizeReportsCount.Normalize(count);
 
             return await dbContext.Scores
-                .GroupBy(score => score.PlayerName, StringComparer.OrdinalIgnoreCase)
+                .GroupBy(score => score.PlayerName)
                 .Where(group => group.Count() >= 10)
                 .Where(group => group.Sum(score => score.Deaths) != 0)
                 .OrderByDescending(group => GetPlayerKillToDeathRatio(group))
@@ -70,6 +72,7 @@ namespace GameStatsServer.Controllers
 
             var lastTimestamp = await dbContext.Matches.MaxAsync(m => m.Timestamp);
             return await dbContext.Servers
+                .Include(s => s.Matches)
                 .OrderByDescending(s => GetServerAverageMatchesPerDay(s, lastTimestamp))
                 .Take(_count)
                 .Select(s => s.CreatePopularServerInfo(lastTimestamp))

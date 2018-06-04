@@ -45,7 +45,9 @@ namespace GameStatsServer.Controllers
         [HttpGet("{endpoint}/matches/{timestamp}")]
         public async Task<MatchInfo> Match(string endpoint, string timestamp)
         {
-            var server = await dbContext.Servers.FindAsync(endpoint);
+            var server = await dbContext.Servers
+                .Include(s => s.Matches)
+                .FirstOrDefaultAsync(s => s.Endpoint == endpoint);
             var match = server.Matches.FirstOrDefault(m => m.Timestamp == DateTime.Parse(timestamp));
             return match?.CreateMatchInfo() ?? null;
         }
