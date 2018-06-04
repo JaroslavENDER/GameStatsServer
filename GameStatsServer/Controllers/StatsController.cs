@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace GameStatsServer.Controllers
 {
+    [ResponseCache(Duration = 60)]
     [Produces("application/json")]
     [Route("api")]
     public class StatsController : Controller
@@ -21,7 +22,7 @@ namespace GameStatsServer.Controllers
             this.dbContext = dbContext;
             this.notFound = notFound;
         }
-
+        
         //GET api/servers/{endpoint}/stats
         [HttpGet("servers/{endpoint}/stats")]
         public async Task<ServerStats> ServerStats(string endpoint)

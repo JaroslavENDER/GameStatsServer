@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace GameStatsServer.Controllers
 {
+    [ResponseCache(Duration = 60)]
     [Produces("application/json")]
     [Route("api/Reports")]
     public class ReportsController : Controller
