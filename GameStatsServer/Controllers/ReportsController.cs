@@ -6,6 +6,7 @@ using GameStatsServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace GameStatsServer.Controllers
 
         //GET api/reports/recent-matches/{count?}
         [HttpGet("recent-matches/{count?}")]
-        public async Task<MatchInfoWithEndpointAndTimestamp[]> RecentMatches(int? count)
+        public async Task<IEnumerable<MatchInfoWithEndpointAndTimestamp>> RecentMatches(int? count)
         {
             var _count = normalizeReportsCount.Normalize(count);
 
@@ -38,12 +39,12 @@ namespace GameStatsServer.Controllers
 
         //GET api/reports/best-players/{count?}
         [HttpGet("best-players/{count?}")]
-        public async Task<BestPlayerInfo[]> BestPlayers(int? count)
+        public async Task<IEnumerable<BestPlayerInfo>> BestPlayers(int? count)
         {
             var _count = normalizeReportsCount.Normalize(count);
 
             return await dbContext.Scores
-                .GroupBy(score => score.PlayerName)
+                .GroupBy(score => score.PlayerName, StringComparer.OrdinalIgnoreCase)
                 .Where(group => group.Count() >= 10)
                 .Where(group => group.Sum(score => score.Deaths) != 0)
                 .OrderByDescending(group => GetPlayerKillToDeathRatio(group))
@@ -61,7 +62,7 @@ namespace GameStatsServer.Controllers
 
         //GET api/reports/popular-servers/{count?}
         [HttpGet("popular-servers/{count?}")]
-        public async Task<PopularServerInfo[]> PopularServers(int? count)
+        public async Task<IEnumerable<PopularServerInfo>> PopularServers(int? count)
         {
             if (!await dbContext.Matches.AnyAsync())
                 return new PopularServerInfo[0];
