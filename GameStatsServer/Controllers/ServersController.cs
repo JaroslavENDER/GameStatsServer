@@ -37,6 +37,12 @@ namespace GameStatsServer.Controllers
         [HttpPut("{endpoint}/info")]
         public async Task Info(string endpoint, [FromBody]ServerInfo value)
         {
+            if (value == null || !value.IsValidModel())
+            {
+                Response.StatusCode = 400;
+                return;
+            }
+
             dbContext.Servers.Add(value.CreateServer(endpoint));
             await dbContext.SaveChangesAsync();
         }
@@ -56,6 +62,12 @@ namespace GameStatsServer.Controllers
         [HttpPut("{endpoint}/matches/{timestamp}")]
         public async Task Match(string endpoint, string timestamp, [FromBody]MatchInfo value)
         {
+            if (value == null || !value.IsValidModel())
+            {
+                Response.StatusCode = 400;
+                return;
+            }
+
             var server = await dbContext.Servers.FindAsync(endpoint);
             server?.Matches.Add(value.CreateMatch(timestamp));
             await dbContext.SaveChangesAsync();

@@ -14,5 +14,11 @@ namespace GameStatsServer.Extensions
                 GameModes = string.Join(", ", serverInfo.GameModes)
             };
         }
+
+        public static bool IsValidModel(this ServerInfo serverInfo)
+        {
+            return serverInfo.Name != null
+                && serverInfo.GameModes != null;
+        }
     }
 }

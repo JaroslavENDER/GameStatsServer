@@ -29,5 +29,12 @@ namespace GameStatsServer.Extensions
                 result.Scores[i].LeaderboardPlace = i + 1;
             return result;
         }
+
+        public static bool IsValidModel(this MatchInfo matchInfo)
+        {
+            return !string.IsNullOrEmpty(matchInfo.Map)
+                && !string.IsNullOrEmpty(matchInfo.GameMode)
+                && matchInfo.Scoreboard != null;
+        }
     }
 }
