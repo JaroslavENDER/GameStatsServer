@@ -1,6 +1,7 @@
 ﻿using GameStatsServer.DataProviders;
 using GameStatsServer.Extensions;
 using GameStatsServer.Models;
+using GameStatsServer.Services.StatusCodeServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,9 +15,12 @@ namespace GameStatsServer.Controllers
     public class StatsController : Controller
     {
         private readonly IDbContext dbContext;
-        public StatsController(IDbContext dbContext)
-            => this.dbContext = dbContext;
-
+        private readonly INotFoundService notFound;
+        public StatsController(IDbContext dbContext, INotFoundService notFound)
+        {
+            this.dbContext = dbContext;
+            this.notFound = notFound;
+        }
 
         //GET api/servers/{endpoint}/stats
         [HttpGet("servers/{endpoint}/stats")]
@@ -28,6 +32,8 @@ namespace GameStatsServer.Controllers
             var lastTimestamp = await dbContext.Matches.AnyAsync()
                 ? await dbContext.Matches.MaxAsync(m => m.Timestamp)
                 : DateTime.Now;
+            if (server == null)
+                notFound.Set(ControllerContext.HttpContext);
             return server?.CreateServerStats(lastTimestamp);
         }
 
@@ -42,9 +48,13 @@ namespace GameStatsServer.Controllers
             var lastTimestamp = await dbContext.Matches.AnyAsync()
                 ? await dbContext.Matches.MaxAsync(m => m.Timestamp)
                 : DateTime.Now;
-            return playerScores.Any()
-                ? playerScores.CreateStats(lastTimestamp)
-                : null;
+            if (playerScores.Any())
+                return playerScores.CreateStats(lastTimestamp);
+            else
+            {
+                notFound.Set(ControllerContext.HttpContext);
+                return null;
+            }
         }
     }
 }

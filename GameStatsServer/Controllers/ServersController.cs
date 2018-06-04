@@ -37,6 +37,8 @@ namespace GameStatsServer.Controllers
         public async Task<ServerInfo> Info(string endpoint)
         {
             var server = await dbContext.Servers.FindAsync(endpoint);
+            if (server == null)
+                notFound.Set(ControllerContext.HttpContext);
             return server?.CreateServerInfo() ?? null;
         }
 
@@ -65,7 +67,14 @@ namespace GameStatsServer.Controllers
             var server = await dbContext.Servers
                 .Include(s => s.Matches)
                 .FirstOrDefaultAsync(s => s.Endpoint == endpoint);
+            if (server == null)
+            {
+                notFound.Set(ControllerContext.HttpContext);
+                return null;
+            }
             var match = server.Matches.FirstOrDefault(m => m.Timestamp == DateTime.Parse(timestamp));
+            if (match == null)
+                notFound.Set(ControllerContext.HttpContext);
             return match?.CreateMatchInfo() ?? null;
         }
 
@@ -80,6 +89,8 @@ namespace GameStatsServer.Controllers
             }
 
             var server = await dbContext.Servers.FindAsync(endpoint);
+            if (server == null)
+                notFound.Set(ControllerContext.HttpContext);
             server?.Matches.Add(value.CreateMatch(timestamp));
             await dbContext.SaveChangesAsync();
         }
