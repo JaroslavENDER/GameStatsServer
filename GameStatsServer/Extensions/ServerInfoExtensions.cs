@@ -20,5 +20,11 @@ namespace GameStatsServer.Extensions
             return serverInfo.Name != null
                 && serverInfo.GameModes != null;
         }
+
+        public static void Rewrite(this ServerInfo serverInfo, Server server)
+        {
+            server.Name = serverInfo.Name;
+            server.GameModes = string.Join(", ", serverInfo.GameModes);
+        }
     }
 }

@@ -43,7 +43,11 @@ namespace GameStatsServer.Controllers
                 return;
             }
 
-            dbContext.Servers.Add(value.CreateServer(endpoint));
+            var server = await dbContext.Servers.FindAsync(endpoint);
+            if (server != null)
+                value.Rewrite(server);
+            else
+                dbContext.Servers.Add(value.CreateServer(endpoint));
             await dbContext.SaveChangesAsync();
         }
 
