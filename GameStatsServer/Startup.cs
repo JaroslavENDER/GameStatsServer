@@ -1,5 +1,6 @@
 ﻿using GameStatsServer.Extensions;
 using GameStatsServer.Services;
+using GameStatsServer.Services.StatusCodeServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,8 @@ namespace GameStatsServer
             services.AddEFDbContext(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddTransient<INormalizeReportsCount, NormalizeReportsCount>();
+            services.AddTransient<IBadRequestService, BadRequestService>();
+            services.AddTransient<INotFoundService, NotFoundService>();
 
             services.AddMvc();
         }

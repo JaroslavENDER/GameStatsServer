@@ -1,6 +1,7 @@
 ﻿using GameStatsServer.DataProviders;
 using GameStatsServer.Extensions;
 using GameStatsServer.Models;
+using GameStatsServer.Services.StatusCodeServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,8 +16,14 @@ namespace GameStatsServer.Controllers
     public class ServersController : Controller
     {
         private readonly IDbContext dbContext;
-        public ServersController(IDbContext dbContext)
-            => this.dbContext = dbContext;
+        private readonly IBadRequestService badRequest;
+        private readonly INotFoundService notFound;
+        public ServersController(IDbContext dbContext, IBadRequestService badRequest, INotFoundService notFound)
+        {
+            this.dbContext = dbContext;
+            this.badRequest = badRequest;
+            this.notFound = notFound;
+        }
 
         //GET api/servers/info
         [HttpGet("info")]
@@ -39,7 +46,7 @@ namespace GameStatsServer.Controllers
         {
             if (value == null || !value.IsValidModel())
             {
-                Response.StatusCode = 400;
+                badRequest.Set(ControllerContext.HttpContext);
                 return;
             }
 
@@ -68,7 +75,7 @@ namespace GameStatsServer.Controllers
         {
             if (value == null || !value.IsValidModel())
             {
-                Response.StatusCode = 400;
+                badRequest.Set(ControllerContext.HttpContext);
                 return;
             }
 
